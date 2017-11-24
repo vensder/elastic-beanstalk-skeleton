@@ -1,0 +1,64 @@
+{
+    "AWSEBDockerrunVersion": "2",
+
+    "volumes": [
+        {
+        "name": "nginx-conf",
+            "host": {
+                "sourcePath": "/home/ec2-user/nginx"
+            }
+        }
+    ],
+    
+    "containerDefinitions": [
+        {
+            "name": "app",
+            "image": "vensder/hello-go:latest",
+            "essential": true,
+            "memory": 1024,
+
+            "portMappings": [
+                {
+                    "hostPort": 8080,
+                    "containerPort": 8080
+                }
+            ],
+            "environment" : [
+                {
+                    "name" : "env",
+                    "value" : "demo"
+                },
+       		{
+       			"name": "var2",
+       			"value": "value2"
+       		}
+            ]
+        },
+
+        {
+            "name": "nginx",
+            "image": "nginx",
+            "essential": true,
+            "memory": 256,
+
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+
+            "links": [
+                "app"
+            ],
+            "mountPoints": [
+               {
+                "sourceVolume": "nginx-conf",
+                "containerPath": "/etc/nginx/conf.d",
+                "readOnly": true
+                }
+            ]
+         
+        }
+    ]
+}
